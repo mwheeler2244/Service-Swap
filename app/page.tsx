@@ -2,8 +2,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { Poppins } from "next/font/google";
 import {
-  Check,
-  CheckCheck,
   Send,
   Search,
   Calendar,
@@ -11,7 +9,6 @@ import {
   X,
   Image,
   Smile,
-  Bell,
   MapPin,
   Plus,
   Trash,
@@ -33,7 +30,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 // Types
-import { Service, Match, Message, Conversation, User, Booking } from "@/types";
+import { Service, Match, Message, Conversation, Booking } from "@/types";
 
 // Components
 import {
@@ -54,12 +51,12 @@ import {
   initialConversations,
 } from "@/data/mockData";
 
-// Poppins font
-const poppins = Poppins({
-  weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
-  display: "swap",
-});
+// Poppins font (loaded but not used in this component)
+// const poppins = Poppins({
+//   weight: ["400", "500", "600", "700"],
+//   subsets: ["latin"],
+//   display: "swap",
+// });
 
 // ServiceDetailsModal
 const ServiceDetailsModal = ({
@@ -160,7 +157,7 @@ const ServiceDetailsModal = ({
             <div className="md:col-span-1 space-y-6">
               <img
                 src={service.image || getCategoryImage(service.category)}
-                alt={`Image for ${service.title}`}
+                alt={service.image ? `Image for ${service.title}` : ""}
                 className="w-full aspect-video object-cover rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-md" // More rounded, shadow
               />
 
@@ -349,8 +346,11 @@ const ScheduleModal = ({
   const [availableTimesForDate, setAvailableTimesForDate] = useState<string[]>(
     []
   );
-  const today = new Date();
-  today.setHours(0, 0, 0, 0); // Normalize today to the start of the day
+  const today = useMemo(() => {
+    const date = new Date();
+    date.setHours(0, 0, 0, 0); // Normalize today to the start of the day
+    return date;
+  }, []);
 
   // Generate available dates starting from today
   const availableDates = useMemo(() => {
@@ -359,7 +359,7 @@ const ScheduleModal = ({
       date.setDate(today.getDate() + i);
       return date.toISOString().split("T")[0];
     });
-  }, []); // Calculate only once
+  }, [today]); // Include today as dependency
 
   // - Availability Parsing Logic (Improved some parts) -
   const parseAvailability = useCallback(() => {
@@ -741,7 +741,7 @@ const ScheduleModal = ({
 const App = () => {
   // - State Definitions -
   const [services, setServices] = useState<Service[]>(initialServices);
-  const [matches, setMatches] = useState<Match[]>(initialMatches);
+  const [matches] = useState<Match[]>(initialMatches); // Removed setMatches as it's not used
   const [conversations, setConversations] =
     useState<Conversation[]>(initialConversations);
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -887,6 +887,8 @@ const App = () => {
     conversations,
     showFavoritesOnly,
     isConversationCollapsed,
+    activeConversation,
+    services,
     handleSetActiveConversation,
   ]);
 
@@ -898,7 +900,7 @@ const App = () => {
       showAppNotification(`Welcome back, ${currentUser.name}!`);
     }, 1200);
     return () => clearTimeout(timer);
-  }, [isHydrated, currentUser.name, showAppNotification]); // Consistent dependency array
+  }, [isHydrated, showAppNotification]); // Removed currentUser.name as it's not changing
 
   // Scroll to bottom of messages
   useEffect(() => {
@@ -1245,7 +1247,6 @@ const App = () => {
       services,
       showAppNotification,
       activeConversation,
-      currentUser.name,
       handleSetActiveConversation,
     ]
   );
@@ -1279,8 +1280,8 @@ const App = () => {
         showAppNotification(`"${serviceTitle}" ${action} favorites.`);
       }
     },
-    [services, showAppNotification, selectedService]
-  ); // selectedService added as dependency
+    [showAppNotification, selectedService]
+  ); // Removed services as unnecessary dependency
 
   // Cancel booking (useCallback)
   const handleCancelBooking = useCallback(
@@ -1387,9 +1388,9 @@ const App = () => {
       (s) => s.userName.toLowerCase() === trimmedName.toLowerCase()
     );
     // Generate a placeholder ID if no user service is found (could be a user without a listed service)
-    let participantUserId = userService ? userService.userId : Date.now(); // Use timestamp as fallback ID
-    let participantAvatar = userService?.avatar;
-    let associatedServiceId = userService?.id;
+    const participantUserId = userService ? userService.userId : Date.now(); // Use timestamp as fallback ID
+    const participantAvatar = userService?.avatar;
+    const associatedServiceId = userService?.id;
 
     const highestId = Math.max(0, ...conversations.map((c) => c.id));
     const newConvo: Conversation = {
@@ -1443,7 +1444,6 @@ const App = () => {
     services,
     showAppNotification,
     currentUserId,
-    currentUser.name,
   ]);
 
   // Delete conversation (useCallback)
@@ -2433,7 +2433,7 @@ const App = () => {
                     </p>
                     <p className="max-w-xs">
                       Choose a chat from the list or start a new one using the
-                      '+' button.
+                      &apos;+&apos; button.
                     </p>
                   </div>
                 )}

@@ -43,7 +43,7 @@ export const ServiceCard = ({
         <div className="w-full h-40 mb-4 rounded-xl overflow-hidden relative border border-neutral-100 dark:border-neutral-700">
           <img
             src={service.image || getCategoryImage(service.category)}
-            alt={`${service.title}`}
+            alt={service.image ? `${service.title}` : ""}
             className="w-full h-full object-cover transition-transform duration-300 ease-in-out group-hover:scale-110"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-black/5 to-transparent transition-opacity duration-300" />
@@ -142,7 +142,9 @@ export const ServiceCard = ({
           <span className="bg-cyan-100 dark:bg-cyan-900/60 text-cyan-800 dark:text-cyan-100 p-1 rounded-full mr-1.5 flex-shrink-0 shadow-sm">
             <Check size={12} />
           </span>
-          <span className="truncate">Matched: "{matchedService.title}"</span>
+          <span className="truncate">
+            Matched: &quot;{matchedService.title}&quot;
+          </span>
         </p>
       </motion.div>
     )}
