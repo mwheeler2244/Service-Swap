@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { Poppins } from "next/font/google";
+// import { Poppins } from "next/font/google"; // Commented out as not used
 import {
   Send,
   Search,
