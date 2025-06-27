@@ -2,7 +2,7 @@
 
 A modern, full-featured service exchange platform built with Next.js, React, and TypeScript. Connect with your community to offer and discover local services through an intuitive, real-time messaging interface.
 
-Visit: [https://service-swap-8lze-56p1gvs3x-mikes-projects-39d4e706.vercel.app/](https://service-swap-8lze-56p1gvs3x-mikes-projects-39d4e706.vercel.app/)
+Visit: https://service-swap-8lze-56p1gvs3x-mikes-projects-39d4e706.vercel.app/
 
 ## ✨ Features
 
